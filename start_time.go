@@ -39,7 +39,7 @@ var (
 )
 
 func main() {
-	bot, err := tgbotapi.NewBotAPI("5708011095:AAHJiuyPCem8MSmZqbKpJCFzR11xT3lEwIk")
+	bot, err := tgbotapi.NewBotAPI("")
 	if err != nil {
 		log.Fatal(err)
 	}
@@ -73,11 +73,31 @@ func main() {
 				sendMessage(bot, update.Message.Chat.ID, "Добро пожаловать! Используйте команду /time для установки времени отправки сообщений.")
 			case "time":
 				go handleTimeCommand(bot, update.Message, scheduledMessages, update.Message.Chat.UserName)
-			case "setmessage":
-				go handleSetMessageCommand(bot, update.Message)
+			case "stop":
+				go handleStopCommand(bot, update.Message)
 			}
 		}
 	}
+}
+
+// Функция для удаления пользователя и его данных
+func handleStopCommand(bot *tgbotapi.BotAPI, msg *tgbotapi.Message) {
+	chatID := msg.Chat.ID
+	username := msg.Chat.UserName
+
+	// Удаление пользователя из данных
+	for i, data := range userData {
+		if data.Username == username {
+			userData = append(userData[:i], userData[i+1:]...)
+			break
+		}
+	}
+
+	// Сохранение обновленных данных
+	saveUserData()
+
+	// Отправка сообщения об удалении пользователя
+	sendMessage(bot, chatID, "Вы успешно отписались от сервиса. Ваши данные удалены.")
 }
 
 func getRandomUniqueMessage(filePath string, chosenMessages map[string]bool) (string, error) {
@@ -211,24 +231,13 @@ func handleTimeCommand(bot *tgbotapi.BotAPI, msg *tgbotapi.Message, scheduledMes
 	}
 }
 
-// Обработка команды /setmessage для установки нового сообщения
-func handleSetMessageCommand(bot *tgbotapi.BotAPI, msg *tgbotapi.Message) {
-	newMessage := msg.CommandArguments()
-	if newMessage == "" {
-		sendMessage(bot, msg.Chat.ID, "Использование: /setmessage <новое_сообщение>")
-		return
-	}
-	defaultMessage = newMessage
-	sendMessage(bot, msg.Chat.ID, "Сообщение успешно изменено")
-}
-
 // Горутина для отправки отложенных сообщений
 func sendScheduledMessages(bot *tgbotapi.BotAPI, scheduledMessages chan ScheduledMessage) {
 	for {
 		msg := <-scheduledMessages
 
 		// !! TO DO Вынести в отдельную функцию
-		
+
 		var message string
 		filePath := "messages.txt"
 		chosenMessages := make(map[string]bool)
