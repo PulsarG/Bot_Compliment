@@ -49,7 +49,7 @@ func main() {
 	chosenMessages := make(map[string]bool)
 
 	// Пример выбора 5 случайных сообщений
-	for i := 0; i < 5; i++ {
+	for i := 0; i < 1; i++ {
 		message, err := getRandomUniqueMessage(filePath, chosenMessages)
 		if err != nil {
 			log.Println("Ошибка выбора сообщения:", err)
