@@ -2,7 +2,7 @@ package main
 
 import (
 	"encoding/json"
-	//"io/ioutil"
+	"io/ioutil"
 	"log"
 	"os"
 	"strconv"
@@ -37,7 +37,7 @@ var (
 )
 
 func main() {
-	bot, err := tgbotapi.NewBotAPI("token")
+	bot, err := tgbotapi.NewBotAPI("")
 	if err != nil {
 		log.Fatal(err)
 	}
