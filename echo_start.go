@@ -1,4 +1,4 @@
-package main
+/* package main
 
 import (
 	"log"
@@ -8,7 +8,7 @@ import (
 
 func main() {
 	// Создание нового бота с токеном
-	bot, err := tgbotapi.NewBotAPI("5708011095:AAHJiuyPCem8MSmZqbKpJCFzR11xT3lEwIk")
+	bot, err := tgbotapi.NewBotAPI("token")
 	if err != nil {
 		log.Fatal(err)
 	}
@@ -59,3 +59,4 @@ func main() {
 		bot.Send(msg)
 	}
 }
+ */

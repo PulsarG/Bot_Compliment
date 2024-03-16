@@ -1,4 +1,4 @@
-package main
+/* package main
 
 import (
 	"log"
@@ -41,3 +41,4 @@ func main() {
 		bot.Send(msg)
 	}
 }
+ */
