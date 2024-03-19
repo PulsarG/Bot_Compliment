@@ -25,7 +25,7 @@ var (
 )
 
 func main() {
-	bot, err := tgbotapi.NewBotAPI("5708011095:AAHJiuyPCem8MSmZqbKpJCFzR11xT3lEwIk")
+	bot, err := tgbotapi.NewBotAPI("")
 	if err != nil {
 		log.Fatal(err)
 	}
