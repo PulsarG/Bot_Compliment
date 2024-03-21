@@ -2,14 +2,10 @@ package main
 
 import (
 	"encoding/json"
-	"errors"
 	"fmt"
 	"io/ioutil"
 	"log"
-	"math/rand"
 	"os"
-	"strings"
-	"time"
 
 	"github.com/go-telegram-bot-api/telegram-bot-api"
 
@@ -55,7 +51,7 @@ func main() {
 	scheduledMessages := make(chan msg.ScheduledMessage)
 
 	// Горутина для отправки отложенных сообщений
-	go sendScheduledMessages(bot, scheduledMessages)
+	go send.SendScheduledMessages(bot, scheduledMessages)
 
 	for update := range updates {
 		if update.Message == nil { // Игнорируем любые обновления, кроме сообщений
@@ -72,63 +68,6 @@ func main() {
 				go comm.HandleStopCommand(bot, update.Message, userData)
 			}
 		}
-	}
-}
-
-func getRandomUniqueMessage(filePath string, chosenMessages map[string]bool) (string, error) {
-	// Чтение содержимого файла
-	content, err := ioutil.ReadFile(filePath)
-	if err != nil {
-		return "", err
-	}
-
-	// Разделение содержимого файла на отдельные сообщения по переносу строки
-	messages := strings.Split(string(content), "\n")
-
-	// Создание списка доступных для выбора сообщений (которые еще не были выбраны)
-	availableMessages := make([]string, 0)
-	for _, message := range messages {
-		if !chosenMessages[message] && message != "" {
-			availableMessages = append(availableMessages, message)
-		}
-	}
-
-	// Если доступных сообщений нет, возвращаем ошибку
-	if len(availableMessages) == 0 {
-		return "", errors.New("все сообщения уже были выбраны")
-	}
-
-	// Выбор рандомного сообщения из доступных
-	rand.Seed(time.Now().UnixNano())
-	selectedMessage := availableMessages[rand.Intn(len(availableMessages))]
-
-	// Отметка выбранного сообщения как выбранного
-	chosenMessages[selectedMessage] = true
-
-	return selectedMessage, nil
-}
-
-// Горутина для отправки отложенных сообщений
-func sendScheduledMessages(bot *tgbotapi.BotAPI, scheduledMessages chan msg.ScheduledMessage) {
-	for {
-		msg := <-scheduledMessages
-
-		// !! TO DO Вынести в отдельную функцию
-
-		var message string
-		filePath := "messages.txt"
-		chosenMessages := make(map[string]bool)
-		for i := 0; i < 1; i++ {
-			randMessage, err := getRandomUniqueMessage(filePath, chosenMessages)
-			if err != nil {
-				log.Println("Ошибка выбора сообщения:", err)
-				break
-			}
-			message = randMessage
-			log.Println("Выбранное сообщение:", message)
-		}
-
-		send.SendMessage(bot, msg.ChatID, message)
 	}
 }
 
