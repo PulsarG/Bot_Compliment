@@ -3,6 +3,7 @@ package main
 import (
 	"encoding/json"
 	"errors"
+	"fmt"
 	"io/ioutil"
 	"log"
 	"math/rand"
@@ -13,6 +14,7 @@ import (
 
 	"github.com/go-telegram-bot-api/telegram-bot-api"
 
+	send "Bot_Compliment/handlemessage"
 	msg "Bot_Compliment/message"
 	user "Bot_Compliment/userdata"
 )
@@ -42,14 +44,22 @@ var (
 )
 
 func main() {
-	bot, err := tgbotapi.NewBotAPI("")
+	arguments := os.Args
+	if len(arguments) == 1 {
+		fmt.Println("Please give Token")
+		return
+	}
+
+	token := arguments[1]
+
+	bot, err := tgbotapi.NewBotAPI(token)
 	if err != nil {
 		log.Fatal(err)
 	}
 
 	//bot.Debug = true
 
-	log.Printf("Авторизован на аккаунте %s", bot.Self.UserName)
+	log.Printf("Активирован бот %s", bot.Self.UserName)
 
 	loadUserData()
 	loadScheduledEvents()
@@ -73,7 +83,7 @@ func main() {
 		if update.Message.IsCommand() {
 			switch update.Message.Command() {
 			case "start":
-				sendMessage(bot, update.Message.Chat.ID, "Добро пожаловать! Используйте команду /time для установки времени отправки сообщений.")
+				send.SendMessage(bot, update.Message.Chat.ID, "Добро пожаловать! Используйте команду /time для установки времени отправки сообщений.")
 			case "time":
 				go handleTimeCommand(bot, update.Message, scheduledMessages, update.Message.Chat.UserName)
 			case "stop":
@@ -100,7 +110,7 @@ func handleStopCommand(bot *tgbotapi.BotAPI, msg *tgbotapi.Message) {
 	saveUserData()
 
 	// Отправка сообщения об удалении пользователя
-	sendMessage(bot, chatID, "Вы успешно отписались от сервиса. Ваши данные удалены.")
+	send.SendMessage(bot, chatID, "Вы успешно отписались от сервиса. Ваши данные удалены.")
 }
 
 func getRandomUniqueMessage(filePath string, chosenMessages map[string]bool) (string, error) {
@@ -147,13 +157,13 @@ func handleTimeCommand(bot *tgbotapi.BotAPI, mssg *tgbotapi.Message, scheduledMe
 	if len(params) == 2 { // Пользователь ввел только одно время
 		hour, err := strconv.Atoi(params[0])
 		if err != nil {
-			sendMessage(bot, mssg.Chat.ID, "Неверный час")
+			send.SendMessage(bot, mssg.Chat.ID, "Неверный час")
 			return
 		}
 
 		minute, err := strconv.Atoi(params[1])
 		if err != nil {
-			sendMessage(bot, mssg.Chat.ID, "Неверная минута")
+			send.SendMessage(bot, mssg.Chat.ID, "Неверная минута")
 			return
 		}
 
@@ -188,14 +198,14 @@ func handleTimeCommand(bot *tgbotapi.BotAPI, mssg *tgbotapi.Message, scheduledMe
 		for i := 0; i < 2; i++ {
 			hour, err := strconv.Atoi(params[i*2])
 			if err != nil {
-				sendMessage(bot, mssg.Chat.ID, "Неверный час")
+				send.SendMessage(bot, mssg.Chat.ID, "Неверный час")
 				return
 			}
 			hours[i] = hour
 
 			minute, err := strconv.Atoi(params[i*2+1])
 			if err != nil {
-				sendMessage(bot, mssg.Chat.ID, "Неверная минута")
+				send.SendMessage(bot, mssg.Chat.ID, "Неверная минута")
 				return
 			}
 			minutes[i] = minute
@@ -230,7 +240,7 @@ func handleTimeCommand(bot *tgbotapi.BotAPI, mssg *tgbotapi.Message, scheduledMe
 		}
 		saveUserData()
 	} else {
-		sendMessage(bot, mssg.Chat.ID, "Использование: /time <час1> <минута1> [<час2> <минута2>]")
+		send.SendMessage(bot, mssg.Chat.ID, "Использование: /time <час1> <минута1> [<час2> <минута2>]")
 	}
 }
 
@@ -254,18 +264,18 @@ func sendScheduledMessages(bot *tgbotapi.BotAPI, scheduledMessages chan msg.Sche
 			log.Println("Выбранное сообщение:", message)
 		}
 
-		sendMessage(bot, msg.ChatID, message)
+		send.SendMessage(bot, msg.ChatID, message)
 	}
 }
 
 // Функция для отправки сообщения
-func sendMessage(bot *tgbotapi.BotAPI, chatID int64, text string) {
+/* func sendMessage(bot *tgbotapi.BotAPI, chatID int64, text string) {
 	msg := tgbotapi.NewMessage(chatID, text)
 	_, err := bot.Send(msg)
 	if err != nil {
 		log.Println("Ошибка отправки сообщения:", err)
 	}
-}
+} */
 
 // Функция для сохранения информации о пользователе в файл
 func saveUserData() {
