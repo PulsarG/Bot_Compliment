@@ -18,6 +18,7 @@ import (
 	msg "Bot_Compliment/message"
 	user "Bot_Compliment/userdata"
 	comm "Bot_Compliment/command"
+	"Bot_Compliment/data"
 )
 
 // Структура для хранения отложенных сообщений
@@ -37,9 +38,9 @@ import (
 } */
 
 var (
-	defaultMessage  = "Ваше отложенное сообщение отправлено."
-	userDataFile    = "userdata.json"
-	scheduledFile   = "scheduled.json"
+	//defaultMessage  = "Ваше отложенное сообщение отправлено."
+	//userDataFile    = "userdata.json"
+	//scheduledFile   = "scheduled.json"
 	userData        []user.UserData
 	scheduledEvents []msg.ScheduledMessage
 )
@@ -189,7 +190,7 @@ func handleTimeCommand(bot *tgbotapi.BotAPI, mssg *tgbotapi.Message, scheduledMe
 		duration := targetTime.Sub(time.Now())
 		go func(d time.Duration) {
 			time.Sleep(d)
-			scheduledMessages <- msg.ScheduledMessage{ChatID: mssg.Chat.ID, Message: defaultMessage}
+			scheduledMessages <- msg.ScheduledMessage{ChatID: mssg.Chat.ID, Message: data.DefaultMessage}
 		}(duration)
 		user.SaveUserData(userData)
 	} else if len(params) == 4 { // Пользователь ввел два времени
@@ -236,7 +237,7 @@ func handleTimeCommand(bot *tgbotapi.BotAPI, mssg *tgbotapi.Message, scheduledMe
 			duration := targetTime.Sub(time.Now())
 			go func(d time.Duration, index int) {
 				time.Sleep(d)
-				scheduledMessages <- msg.ScheduledMessage{ChatID: mssg.Chat.ID, Message: defaultMessage}
+				scheduledMessages <- msg.ScheduledMessage{ChatID: mssg.Chat.ID, Message: data.DefaultMessage}
 			}(duration, i)
 		}
 		user.SaveUserData(userData)
@@ -293,7 +294,7 @@ func sendScheduledMessages(bot *tgbotapi.BotAPI, scheduledMessages chan msg.Sche
 
 // Функция для загрузки информации о пользователях из файла
 func loadUserData() {
-	file, err := os.Open(userDataFile)
+	file, err := os.Open(data.UserDataFile)
 	if err != nil {
 		log.Println("Ошибка открытия файла с данными пользователя:", err)
 		return
@@ -314,7 +315,7 @@ func loadUserData() {
 
 // Функция для загрузки отложенных событий из файла
 func loadScheduledEvents() {
-	file, err := os.Open(scheduledFile)
+	file, err := os.Open(data.ScheduledFile)
 	if err != nil {
 		log.Println("Ошибка открытия файла с отложенными событиями:", err)
 		return
@@ -340,7 +341,7 @@ func saveScheduledEvents() {
 		log.Println("Ошибка сериализации отложенных событий:", err)
 		return
 	}
-	err = ioutil.WriteFile(scheduledFile, jsonData, 0644)
+	err = ioutil.WriteFile(data.ScheduledFile, jsonData, 0644)
 	if err != nil {
 		log.Println("Ошибка записи отложенных событий в файл:", err)
 	}

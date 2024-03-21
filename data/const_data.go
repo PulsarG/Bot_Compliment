@@ -5,7 +5,7 @@ import (
 )
 
 var (
-	defaultMessage = "Ваше отложенное сообщение отправлено."
+	DefaultMessage = "Ваше отложенное сообщение отправлено."
 	UserDataFile   = "userdata.json"
 	ScheduledFile  = "scheduled.json"
 	//UserData       []user.UserData
