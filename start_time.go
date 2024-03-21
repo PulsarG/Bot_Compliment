@@ -14,33 +14,14 @@ import (
 
 	"github.com/go-telegram-bot-api/telegram-bot-api"
 
+	comm "Bot_Compliment/command"
+	"Bot_Compliment/data"
 	send "Bot_Compliment/handlemessage"
 	msg "Bot_Compliment/message"
 	user "Bot_Compliment/userdata"
-	comm "Bot_Compliment/command"
-	"Bot_Compliment/data"
 )
 
-// Структура для хранения отложенных сообщений
-/* type ScheduledMessage struct {
-	ChatID  int64
-	Message string
-} */
-
-// Структура для хранения информации о пользователе
-/* type UserData struct {
-	Username string
-	ChatID   int64
-	Hour1    int
-	Min1     int
-	Hour2    int
-	Min2     int
-} */
-
 var (
-	//defaultMessage  = "Ваше отложенное сообщение отправлено."
-	//userDataFile    = "userdata.json"
-	//scheduledFile   = "scheduled.json"
 	userData        []user.UserData
 	scheduledEvents []msg.ScheduledMessage
 )
@@ -63,7 +44,7 @@ func main() {
 
 	log.Printf("Активирован бот %s", bot.Self.UserName)
 
-	loadUserData()
+	user.LoadUserData(userData)
 	loadScheduledEvents()
 
 	u := tgbotapi.NewUpdate(0)
@@ -94,26 +75,6 @@ func main() {
 		}
 	}
 }
-
-// Функция для удаления пользователя и его данных
-/* func handleStopCommand(bot *tgbotapi.BotAPI, msg *tgbotapi.Message) {
-	chatID := msg.Chat.ID
-	username := msg.Chat.UserName
-
-	// Удаление пользователя из данных
-	for i, data := range userData {
-		if data.Username == username {
-			userData = append(userData[:i], userData[i+1:]...)
-			break
-		}
-	}
-
-	// Сохранение обновленных данных
-	saveUserData()
-
-	// Отправка сообщения об удалении пользователя
-	send.SendMessage(bot, chatID, "Вы успешно отписались от сервиса. Ваши данные удалены.")
-} */
 
 func getRandomUniqueMessage(filePath string, chosenMessages map[string]bool) (string, error) {
 	// Чтение содержимого файла
@@ -267,49 +228,6 @@ func sendScheduledMessages(bot *tgbotapi.BotAPI, scheduledMessages chan msg.Sche
 		}
 
 		send.SendMessage(bot, msg.ChatID, message)
-	}
-}
-
-// Функция для отправки сообщения
-/* func sendMessage(bot *tgbotapi.BotAPI, chatID int64, text string) {
-	msg := tgbotapi.NewMessage(chatID, text)
-	_, err := bot.Send(msg)
-	if err != nil {
-		log.Println("Ошибка отправки сообщения:", err)
-	}
-} */
-
-// Функция для сохранения информации о пользователе в файл
-/* func saveUserData() {
-	jsonData, err := json.Marshal(userData)
-	if err != nil {
-		log.Println("Ошибка сериализации данных пользователя:", err)
-		return
-	}
-	err = ioutil.WriteFile(userDataFile, jsonData, 0644)
-	if err != nil {
-		log.Println("Ошибка записи данных пользователя в файл:", err)
-	}
-} */
-
-// Функция для загрузки информации о пользователях из файла
-func loadUserData() {
-	file, err := os.Open(data.UserDataFile)
-	if err != nil {
-		log.Println("Ошибка открытия файла с данными пользователя:", err)
-		return
-	}
-	defer file.Close()
-
-	jsonData, err := ioutil.ReadAll(file)
-	if err != nil {
-		log.Println("Ошибка чтения файла с данными пользователя:", err)
-		return
-	}
-
-	err = json.Unmarshal(jsonData, &userData)
-	if err != nil {
-		log.Println("Ошибка десериализации данных пользователя:", err)
 	}
 }
 
