@@ -12,30 +12,33 @@ import (
 	"time"
 
 	"github.com/go-telegram-bot-api/telegram-bot-api"
+
+	user "Bot_Compliment/userdata"
+	msg "Bot_Compliment/message"
 )
 
 // Структура для хранения отложенных сообщений
-type ScheduledMessage struct {
+/* type ScheduledMessage struct {
 	ChatID  int64
 	Message string
-}
+} */
 
 // Структура для хранения информации о пользователе
-type UserData struct {
+/* type UserData struct {
 	Username string
 	ChatID   int64
 	Hour1    int
 	Min1     int
 	Hour2    int
 	Min2     int
-}
+} */
 
 var (
 	defaultMessage  = "Ваше отложенное сообщение отправлено."
 	userDataFile    = "userdata.json"
 	scheduledFile   = "scheduled.json"
-	userData        []UserData
-	scheduledEvents []ScheduledMessage
+	userData        []user.UserData
+	scheduledEvents []msg.ScheduledMessage
 )
 
 func main() {
@@ -57,7 +60,7 @@ func main() {
 	updates, err := bot.GetUpdatesChan(u)
 
 	// Канал для хранения отложенных сообщений
-	scheduledMessages := make(chan ScheduledMessage)
+	scheduledMessages := make(chan msg.ScheduledMessage)
 
 	// Горутина для отправки отложенных сообщений
 	go sendScheduledMessages(bot, scheduledMessages)
@@ -134,7 +137,7 @@ func getRandomUniqueMessage(filePath string, chosenMessages map[string]bool) (st
 }
 
 // Обработка команды /time для установки времени отправки сообщений
-func handleTimeCommand(bot *tgbotapi.BotAPI, msg *tgbotapi.Message, scheduledMessages chan ScheduledMessage, username string) {
+func handleTimeCommand(bot *tgbotapi.BotAPI, msg *tgbotapi.Message, scheduledMessages chan msg.ScheduledMessage, username string) {
 	// Парсинг параметров из команды
 	args := msg.CommandArguments()
 
@@ -167,7 +170,7 @@ func handleTimeCommand(bot *tgbotapi.BotAPI, msg *tgbotapi.Message, scheduledMes
 
 		// Если запись не найдена, создаем новую
 		if !found {
-			userData = append(userData, UserData{Username: username, ChatID: msg.Chat.ID, Hour1: hour, Min1: minute})
+			userData = append(userData, user.UserData{Username: username, ChatID: msg.Chat.ID, Hour1: hour, Min1: minute})
 		}
 
 		// Установка отложенного времени для отправки сообщения
@@ -175,7 +178,7 @@ func handleTimeCommand(bot *tgbotapi.BotAPI, msg *tgbotapi.Message, scheduledMes
 		duration := targetTime.Sub(time.Now())
 		go func(d time.Duration) {
 			time.Sleep(d)
-			scheduledMessages <- ScheduledMessage{ChatID: msg.Chat.ID, Message: defaultMessage}
+			scheduledMessages <- msg.ScheduledMessage{ChatID: msg.Chat.ID, Message: defaultMessage}
 		}(duration)
 		saveUserData()
 	} else if len(params) == 4 { // Пользователь ввел два времени
@@ -213,7 +216,7 @@ func handleTimeCommand(bot *tgbotapi.BotAPI, msg *tgbotapi.Message, scheduledMes
 
 		// Если запись не найдена, создаем новую
 		if !found {
-			userData = append(userData, UserData{Username: username, ChatID: msg.Chat.ID, Hour1: hours[0], Min1: minutes[0], Hour2: hours[1], Min2: minutes[1]})
+			userData = append(userData, user.UserData{Username: username, ChatID: msg.Chat.ID, Hour1: hours[0], Min1: minutes[0], Hour2: hours[1], Min2: minutes[1]})
 		}
 
 		// Установка отложенных времен для отправки сообщений
@@ -222,7 +225,7 @@ func handleTimeCommand(bot *tgbotapi.BotAPI, msg *tgbotapi.Message, scheduledMes
 			duration := targetTime.Sub(time.Now())
 			go func(d time.Duration, index int) {
 				time.Sleep(d)
-				scheduledMessages <- ScheduledMessage{ChatID: msg.Chat.ID, Message: defaultMessage}
+				scheduledMessages <- msg.ScheduledMessage{ChatID: msg.Chat.ID, Message: defaultMessage}
 			}(duration, i)
 		}
 		saveUserData()
@@ -232,7 +235,7 @@ func handleTimeCommand(bot *tgbotapi.BotAPI, msg *tgbotapi.Message, scheduledMes
 }
 
 // Горутина для отправки отложенных сообщений
-func sendScheduledMessages(bot *tgbotapi.BotAPI, scheduledMessages chan ScheduledMessage) {
+func sendScheduledMessages(bot *tgbotapi.BotAPI, scheduledMessages chan msg.ScheduledMessage) {
 	for {
 		msg := <-scheduledMessages
 
