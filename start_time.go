@@ -17,6 +17,7 @@ import (
 	send "Bot_Compliment/handlemessage"
 	msg "Bot_Compliment/message"
 	user "Bot_Compliment/userdata"
+	comm "Bot_Compliment/command"
 )
 
 // Структура для хранения отложенных сообщений
@@ -87,14 +88,14 @@ func main() {
 			case "time":
 				go handleTimeCommand(bot, update.Message, scheduledMessages, update.Message.Chat.UserName)
 			case "stop":
-				go handleStopCommand(bot, update.Message)
+				go comm.HandleStopCommand(bot, update.Message, userData)
 			}
 		}
 	}
 }
 
 // Функция для удаления пользователя и его данных
-func handleStopCommand(bot *tgbotapi.BotAPI, msg *tgbotapi.Message) {
+/* func handleStopCommand(bot *tgbotapi.BotAPI, msg *tgbotapi.Message) {
 	chatID := msg.Chat.ID
 	username := msg.Chat.UserName
 
@@ -111,7 +112,7 @@ func handleStopCommand(bot *tgbotapi.BotAPI, msg *tgbotapi.Message) {
 
 	// Отправка сообщения об удалении пользователя
 	send.SendMessage(bot, chatID, "Вы успешно отписались от сервиса. Ваши данные удалены.")
-}
+} */
 
 func getRandomUniqueMessage(filePath string, chosenMessages map[string]bool) (string, error) {
 	// Чтение содержимого файла
@@ -190,7 +191,7 @@ func handleTimeCommand(bot *tgbotapi.BotAPI, mssg *tgbotapi.Message, scheduledMe
 			time.Sleep(d)
 			scheduledMessages <- msg.ScheduledMessage{ChatID: mssg.Chat.ID, Message: defaultMessage}
 		}(duration)
-		saveUserData()
+		user.SaveUserData(userData)
 	} else if len(params) == 4 { // Пользователь ввел два времени
 		// Разбор часов и минут из параметров
 		hours := make([]int, 2)
@@ -238,7 +239,7 @@ func handleTimeCommand(bot *tgbotapi.BotAPI, mssg *tgbotapi.Message, scheduledMe
 				scheduledMessages <- msg.ScheduledMessage{ChatID: mssg.Chat.ID, Message: defaultMessage}
 			}(duration, i)
 		}
-		saveUserData()
+		user.SaveUserData(userData)
 	} else {
 		send.SendMessage(bot, mssg.Chat.ID, "Использование: /time <час1> <минута1> [<час2> <минута2>]")
 	}
@@ -278,7 +279,7 @@ func sendScheduledMessages(bot *tgbotapi.BotAPI, scheduledMessages chan msg.Sche
 } */
 
 // Функция для сохранения информации о пользователе в файл
-func saveUserData() {
+/* func saveUserData() {
 	jsonData, err := json.Marshal(userData)
 	if err != nil {
 		log.Println("Ошибка сериализации данных пользователя:", err)
@@ -288,7 +289,7 @@ func saveUserData() {
 	if err != nil {
 		log.Println("Ошибка записи данных пользователя в файл:", err)
 	}
-}
+} */
 
 // Функция для загрузки информации о пользователях из файла
 func loadUserData() {
