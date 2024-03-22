@@ -19,15 +19,7 @@ var (
 )
 
 func main() {
-	arguments := os.Args
-	if len(arguments) == 1 {
-		fmt.Println("Please give Token")
-		return
-	}
-
-	token := arguments[1]
-
-	bot, err := tgbotapi.NewBotAPI(token)
+	bot, err := tgbotapi.NewBotAPI(getTikenFromArgument())
 	if err != nil {
 		log.Fatal(err)
 	}
@@ -64,4 +56,13 @@ func main() {
 			}
 		}
 	}
+}
+
+func getTikenFromArgument() string {
+	arguments := os.Args
+	if len(arguments) == 1 {
+		fmt.Println("Please give Token")
+		panic("No arg")
+	}
+	return arguments[1]
 }
