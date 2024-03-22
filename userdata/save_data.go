@@ -5,10 +5,7 @@ import (
 	"io/ioutil"
 	"log"
 
-	//"github.com/go-telegram-bot-api/telegram-bot-api"
-
 	"Bot_Compliment/data"
-	//user "Bot_Compliment/userdata"
 )
 
 func SaveUserData(userData []UserData) {
