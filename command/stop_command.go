@@ -5,6 +5,7 @@ import (
 
 	send "Bot_Compliment/handlemessage"
 	user "Bot_Compliment/userdata"
+	"Bot_Compliment/data"
 )
 
 func HandleStopCommand(bot *tgbotapi.BotAPI, msg *tgbotapi.Message, userData []user.UserData) {
@@ -23,5 +24,5 @@ func HandleStopCommand(bot *tgbotapi.BotAPI, msg *tgbotapi.Message, userData []u
 	user.SaveUserData(userData)
 
 	// Отправка сообщения об удалении пользователя
-	send.SendMessage(bot, chatID, "Вы успешно отписались от сервиса. Ваши данные удалены.")
+	send.SendMessage(bot, chatID, data.Message_usedStop)
 }

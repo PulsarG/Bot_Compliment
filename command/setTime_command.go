@@ -49,6 +49,7 @@ func HandleTimeCommand(bot *tgbotapi.BotAPI, mssg *tgbotapi.Message, scheduledMe
 			userData = append(userData, user.UserData{Username: username, ChatID: mssg.Chat.ID, Hour1: hour, Min1: minute})
 		}
 
+		// !!
 		// Установка отложенного времени для отправки сообщения
 		targetTime := time.Date(time.Now().Year(), time.Now().Month(), time.Now().Day(), hour, minute, 0, 0, time.Local)
 		duration := targetTime.Sub(time.Now())
@@ -95,6 +96,7 @@ func HandleTimeCommand(bot *tgbotapi.BotAPI, mssg *tgbotapi.Message, scheduledMe
 			userData = append(userData, user.UserData{Username: username, ChatID: mssg.Chat.ID, Hour1: hours[0], Min1: minutes[0], Hour2: hours[1], Min2: minutes[1]})
 		}
 
+		// !!
 		// Установка отложенных времен для отправки сообщений
 		for i := 0; i < 2; i++ {
 			targetTime := time.Date(time.Now().Year(), time.Now().Month(), time.Now().Day(), hours[i], minutes[i], 0, 0, time.Local)
@@ -106,6 +108,17 @@ func HandleTimeCommand(bot *tgbotapi.BotAPI, mssg *tgbotapi.Message, scheduledMe
 		}
 		user.SaveUserData(userData)
 	} else {
-		send.SendMessage(bot, mssg.Chat.ID, "Использование: /time <час1> <минута1> [<час2> <минута2>]")
+		send.SendMessage(bot, mssg.Chat.ID, data.Wrong_timeCommand)
 	}
+}
+
+
+
+func setTimeForSendMessage() {
+	targetTime := time.Date(time.Now().Year(), time.Now().Month(), time.Now().Day(), hour, minute, 0, 0, time.Local)
+	duration := targetTime.Sub(time.Now())
+	go func(d time.Duration) {
+		time.Sleep(d)
+		scheduledMessages <- msg.ScheduledMessage{ChatID: mssg.Chat.ID, Message: data.DefaultMessage}
+	}(duration)
 }

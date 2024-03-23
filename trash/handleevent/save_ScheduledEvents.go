@@ -4,11 +4,13 @@ import (
 	"encoding/json"
 	"io/ioutil"
 	"log"
+	"fmt"
 
 	"Bot_Compliment/data"
 )
 
 func SaveScheduledEvents() {
+	fmt.Print("Start SAVE shed")
 	jsonData, err := json.Marshal(scheduledEvents)
 	if err != nil {
 		log.Println("Ошибка сериализации отложенных событий:", err)

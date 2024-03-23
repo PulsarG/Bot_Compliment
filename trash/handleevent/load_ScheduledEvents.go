@@ -2,15 +2,16 @@ package handleevent
 
 import (
 	"encoding/json"
+	"fmt"
 	"io/ioutil"
 	"log"
 	"os"
-
 
 	"Bot_Compliment/data"
 )
 
 func LoadScheduledEvents() {
+	fmt.Print("Start LOAD shed")
 	file, err := os.Open(data.ScheduledFile)
 	if err != nil {
 		log.Println("Ошибка открытия файла с отложенными событиями:", err)

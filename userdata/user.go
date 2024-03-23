@@ -9,3 +9,7 @@ type UserData struct {
 	Hour2    int
 	Min2     int
 }
+
+var (
+	UserDatas []UserData
+)
