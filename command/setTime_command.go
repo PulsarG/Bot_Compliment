@@ -78,7 +78,7 @@ func readParamsTimeCommandAndSave(countParams int, params []string, userDataPoin
 		duration := targetTime.Sub(time.Now())
 		go func(d time.Duration, index int) {
 			time.Sleep(d)
-			scheduledMessages <- msg.ScheduledMessage{ChatID: userID, Message: data.DefaultMessage}
+			scheduledMessages <- msg.ScheduledMessage{ChatID: userID, Message: data.DEFAUTLE_MESSAGE}
 		}(duration, i)
 	}
 

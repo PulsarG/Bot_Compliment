@@ -22,7 +22,10 @@ func main() {
 
 	log.Printf("Активирован бот %s", bot.Self.UserName)
 
-	user.LoadUserData(user.UserDatas)
+	// TO DO В будущем для автозапуска команды после ребута бота
+	user.LoadUserData(&user.UserDatas)
+	fmt.Print(user.UserDatas[0].Username)
+	//go cmd.HandleTimeCommand(bot, update.Message, scheduledMessages, update.Message.Chat.UserName, user.UserDatas)
 
 	u := tgbotapi.NewUpdate(0)
 	u.Timeout = 60
@@ -45,11 +48,11 @@ func main() {
 
 		if update.Message.IsCommand() {
 			switch update.Message.Command() {
-			case data.Command_Start:
-				send.SendMessage(bot, update.Message.Chat.ID, data.Message_Welcome)
-			case data.Command_Time:
+			case data.COMMAND_START:
+				send.SendMessage(bot, update.Message.Chat.ID, data.MESSAGE_WELLCOME)
+			case data.COMMAND_SET_TIME:
 				go cmd.HandleTimeCommand(bot, update.Message, scheduledMessages, update.Message.Chat.UserName, user.UserDatas)
-			case data.Command_Stop:
+			case data.COMMAND_STOP:
 				go cmd.HandleStopCommand(bot, update.Message, user.UserDatas)
 			}
 		}

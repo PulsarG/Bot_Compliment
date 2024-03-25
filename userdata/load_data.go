@@ -9,8 +9,8 @@ import (
 	"Bot_Compliment/data"
 )
 
-func LoadUserData(userData []UserData) {
-	file, err := os.Open(data.UserDataFile)
+func LoadUserData(userData *[]UserData) {
+	file, err := os.Open(data.USER_DATA_FILE)
 	if err != nil {
 		log.Println("Ошибка открытия файла с данными пользователя:", err)
 		return

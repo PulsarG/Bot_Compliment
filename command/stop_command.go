@@ -24,5 +24,5 @@ func HandleStopCommand(bot *tgbotapi.BotAPI, msg *tgbotapi.Message, userData []u
 	user.SaveUserData(userData)
 
 	// Отправка сообщения об удалении пользователя
-	send.SendMessage(bot, chatID, data.Message_usedStop)
+	send.SendMessage(bot, chatID, data.MESSAGE_STOP)
 }

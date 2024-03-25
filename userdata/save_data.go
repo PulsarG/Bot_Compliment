@@ -14,7 +14,7 @@ func SaveUserData(userData []UserData) {
 		log.Println("Ошибка сериализации данных пользователя:", err)
 		return
 	}
-	err = ioutil.WriteFile(data.UserDataFile, jsonData, 0644)
+	err = ioutil.WriteFile(data.USER_DATA_FILE, jsonData, 0644)
 	if err != nil {
 		log.Println("Ошибка записи данных пользователя в файл:", err)
 	}
