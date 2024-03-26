@@ -23,8 +23,8 @@ func main() {
 	log.Printf("Активирован бот %s", bot.Self.UserName)
 
 	// TO DO В будущем для автозапуска команды после ребута бота
-	user.LoadUserData(&user.UserDatas)
-	fmt.Print(user.UserDatas[0].Username)
+	//user.LoadUserData(&user.UserDatas)
+	//fmt.Print(user.UserDatas)
 	//go cmd.HandleTimeCommand(bot, update.Message, scheduledMessages, update.Message.Chat.UserName, user.UserDatas)
 
 	u := tgbotapi.NewUpdate(0)
@@ -46,6 +46,9 @@ func main() {
 			continue
 		}
 
+		user1 := update.Message.From
+		fmt.Println(user1)
+		
 		if update.Message.IsCommand() {
 			switch update.Message.Command() {
 			case data.COMMAND_START:

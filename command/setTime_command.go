@@ -1,6 +1,7 @@
 package command
 
 import (
+	"fmt"
 	"strconv"
 	"strings"
 	"time"
@@ -28,8 +29,10 @@ func HandleTimeCommand(bot *tgbotapi.BotAPI, mssg *tgbotapi.Message, scheduledMe
 		readParamsTimeCommandAndSave(2, params, &userData, bot, mssg.Chat.ID, username, scheduledMessages)
 		user.SaveUserData(userData)
 	} else {
-		send.SendMessage(bot, mssg.Chat.ID, data.Wrong_timeCommand)
+		send.SendMessage(bot, mssg.Chat.ID, data.WRONG_TIME_COMMAND)
 	}
+
+	fmt.Println(mssg.Time())
 }
 
 func readParamsTimeCommandAndSave(countParams int, params []string, userDataPoint *[]user.UserData, bot *tgbotapi.BotAPI, userID int64, username string, scheduledMessages chan msg.ScheduledMessage) {
