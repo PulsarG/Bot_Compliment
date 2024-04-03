@@ -22,10 +22,12 @@ func main() {
 
 	log.Printf("Активирован бот %s", bot.Self.UserName)
 
-	TO DO В будущем для автозапуска команды после ребута бота
-	user.LoadUserData(&user.UserDatas)
-	fmt.Print(user.UserDatas)
-	go cmd.HandleTimeCommand(bot, update.Message, scheduledMessages, update.Message.Chat.UserName, user.UserDatas)
+	// !! РАБОТАЕТ ЛИ В ДЛЯ ВСЕХ? СОХРАНЯЕТ ЛИШЬ ОДИН ЮЗЕР - ЧЕК
+
+	//TO DO В будущем для автозапуска команды после ребута бота
+	//user.LoadUserData(&user.UserDatas)
+	//fmt.Print(user.UserDatas)
+	//go cmd.HandleTimeCommand(bot, update.Message, scheduledMessages, update.Message.Chat.UserName, user.UserDatas)
 
 	u := tgbotapi.NewUpdate(0)
 	u.Timeout = 60
