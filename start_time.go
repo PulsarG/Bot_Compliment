@@ -51,6 +51,7 @@ func main() {
 		user1 := update.Message.From
 		fmt.Println(user1)
 		
+		// !! Поделить на форсируемые команды
 		if update.Message.IsCommand() {
 			switch update.Message.Command() {
 			case data.COMMAND_START:
